@@ -153,4 +153,67 @@ target/
 
 ```
 
-Time investet in this tutorial: 1 h. 30 min.
+
+## Add JSON support
+Add to end of the file Cargo.toml  rows:
+```
+# for JSON  data
+serde = { version = "1.0", features = ["derive"] }
+```
+
+Open and add to file src/main.rs :
+Notice on row  on last position we have new include
+and new new 2-nd "use" row
+
+```rs
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder, Result};
+use serde::Serialize;
+```
+add after row 8 this new rows:
+```rs
+#[derive(Serialize)]
+struct MyObj {
+    name: String
+}
+
+#[get("/json/{name}")]
+async fn json_ndex(name: web::Path<String>) -> Result<impl Responder> {
+    let obj = MyObj {
+        name: name.to_string(),
+    };
+    Ok(web::Json(obj))
+}
+```
+
+and add after row 25 new with content:
+```rs
+.service(json_ndex)
+```
+final look of all code:
+![](./screenshots/api-rust-actix_web-adding-json-support.png)
+
+Now is time to visit URL raletaed with JSON responce.
+Open [http://127.0.0.1:8080/json/test](http://127.0.0.1:8080/json/test)
+
+brwoser must return text like this:
+```json
+{"name":"test"}
+```
+if you replace last part of url from "test" to "rust" and hit enter you must see:
+```json
+{"name":"rust"}
+```
+
+
+
+for more information see oficial documentaion : [https://actix.rs/docs/response/](https://actix.rs/docs/response/)
+
+
+## target direcory statistics
+```
+Add JSON support with serde
+1 939 items, totalling 1,3 GB
+```
+
+
+Time investet in this tutorial: 2 h. 30 min.
